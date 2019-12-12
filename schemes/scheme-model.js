@@ -18,13 +18,32 @@ function findById(id) {
 }
 
 function findSteps(id) {
-  return db('schemes').select('steps.id', 'schemes.scheme_name', 'steps.step_number', 'steps.instructions').join('steps', 'schemes.id', 'steps.scheme_id').where({ scheme_id: id })
+  return db
+  .select('steps.id', 'schemes.scheme_name', 'steps.step_number', 'steps.instructions')
+  .from('schemes')
+  .join('steps', 'schemes.id', 'steps.scheme_id')
+  .where({ scheme_id: id })
 }
 
 function add(obj) {
-  return db('schemes').insert(obj, 'id').then(ids => {
+  return db('schemes')
+  .insert(obj, 'id')
+  .then(ids => {
     const [ id ] = ids;
 
     return findById(id);
   })
+}
+
+function update(obj, id) {
+  return db('schemes')
+  .where('id', id)
+  .update(obj, '*')
+  .then(count => findById(id));
+}
+
+function remove(id) {
+  return db('schemes')
+  .where({ id })
+  .delete();
 }
